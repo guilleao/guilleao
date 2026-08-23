@@ -29,12 +29,11 @@ I focus on building scalable web solutions, designing robust APIs with **Python*
 
 ---
 
-### 📊 GitHub Stats
+### 📊 GitHub Activity
 
 <p align="left">
-  <img src="https://github-readme-streak-stats.herokuapp.com/?user=guilleao&theme=tokyonight&hide_border=true" alt="GitHub Streak" width="98%" />
+  <img src="https://github-readme-activity-graph.vercel.app/graph?username=guilleao&theme=tokyo-night&hide_border=true&area=true" alt="Guille's Activity Graph" width="100%" />
 </p>
-
 ---
 
 ### 📬 Connect with Me
