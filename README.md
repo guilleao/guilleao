@@ -1,4 +1,4 @@
-# Hi there, I'm Guille Aquino 👋
+# Hi there, I'm Guille 👋
 
 **Software Developer** based in Paraguay 🇵🇾. 
 
