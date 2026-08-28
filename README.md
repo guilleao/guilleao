@@ -37,20 +37,7 @@ I focus on building **scalable web solutions**, designing robust APIs with **Pyt
 
 ---
 
-### 📊 GitHub Activity & Statistics
 
-<p align="center">
-  <a href="https://github.com/guilleao">
-    <img src="https://images.weserv.nl/?url=https://github-readme-activity-graph.vercel.app/graph?username=guilleao&theme=tokyo-night&hide_border=true&area=true" width="100%" alt="Guille's Activity Graph" />
-  </a>
-</p>
-
-<p align="center">
-  <a href="https://github.com/guilleao">
-    <img src="https://github-profile-summary-cards.vercel.app/api/cards/stats?username=guilleao&theme=tokyonight" width="49%" alt="GitHub Stats" />
-    <img src="https://github-profile-summary-cards.vercel.app/api/cards/profile-details?username=guilleao&theme=tokyonight" width="49%" alt="Profile Details" />
-  </a>
-</p>
 
 ---
 
