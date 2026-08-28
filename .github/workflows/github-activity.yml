@@ -27,7 +27,7 @@ jobs:
           from datetime import date, timedelta
 
           USERNAME = "guilleao"
-          OUTPUT = "github-contributions.svg"
+          OUTPUT = "github-activity-custom.svg"
 
           query = """
           query($username: String!) {
@@ -325,7 +325,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          git add github-contributions.svg
+          git add github-activity-custom.svg
 
           if git diff --cached --quiet; then
             echo "No changes to commit."
