@@ -41,7 +41,7 @@ I focus on building **scalable web solutions**, designing robust APIs with **Pyt
 
 <p align="center">
   <a href="https://github.com/guilleao">
-    <img src="https://github-readme-activity-graph.vercel.app/graph?username=guilleao&theme=tokyo-night&hide_border=true&area=true" width="100%" alt="Guille's Activity Graph" />
+    <img src="https://metrics.lecoq.io/guilleao?template=classic&base.activity=community%2C%20repositories%2C%20metadata&config.timezone=America%2FAsuncion" width="100%" alt="Guille's Metrics" />
   </a>
 </p>
 
