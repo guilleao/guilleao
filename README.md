@@ -37,6 +37,19 @@ I focus on building **scalable web solutions**, designing robust APIs with **Pyt
 
 ---
 
+### 📊 GitHub Activity & Statistics
+
+<p align="center">
+  <a href="https://github.com">
+    <img src="./github-metrics.svg" width="100%" alt="Guille's Dashboard" />
+  </a>
+</p>
+
+<p align="center">
+  <a href="https://github.com">
+    <img src="./github-activity.svg" width="100%" alt="Guille's Activity" />
+  </a>
+</p>
 
 
 ---
