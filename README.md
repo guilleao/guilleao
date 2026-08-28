@@ -41,10 +41,10 @@ I focus on building **scalable web solutions**, designing robust APIs with **Pyt
 
 <p align="center">
   <a href="https://github.com/guilleao">
-    <img src="https://metrics.lecoq.io/guilleao?template=classic&base.activity=community%2C%20repositories%2C%20metadata&config.timezone=America%2FAsuncion" width="100%" alt="Guille's Metrics" />
+    <img src="https://github-profile-summary-cards.vercel.app/api/cards/profile-details?username=guilleao&theme=tokyonight" width="49%" alt="Profile Details" />
+    <img src="https://github-profile-summary-cards.vercel.app/api/cards/stats?username=guilleao&theme=tokyonight" width="49%" alt="Stats" />
   </a>
 </p>
-
 ---
 
 ### 📬 Connect with Me
