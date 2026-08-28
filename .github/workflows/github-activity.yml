@@ -1,28 +1,335 @@
-name: Generate GitHub Contributions
+name: Generate GitHub Activity
 
 on:
   schedule:
     - cron: "0 0 * * *"
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
-  contributions:
+  generate:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Generate contribution calendar
-        uses: lowlighter/metrics@latest
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          user: guilleao
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-          filename: github-contributions.svg
+      - name: Generate contribution SVG
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python3 <<'PY'
+          import json
+          import os
+          import urllib.request
+          from datetime import date, timedelta
 
-          base: ""
-          template: classic
+          USERNAME = "guilleao"
+          OUTPUT = "github-contributions.svg"
 
-          config_theme: tokyonight
-          config_animations: no
+          query = """
+          query($username: String!) {
+            user(login: $username) {
+              contributionsCollection {
+                contributionCalendar {
+                  totalContributions
+                  weeks {
+                    contributionDays {
+                      contributionCount
+                      date
+                    }
+                  }
+                }
+              }
+            }
+          }
+          """
 
-          plugin_calendar: yes
-          plugin_calendar_limit: 1
+          payload = json.dumps({
+              "query": query,
+              "variables": {
+                  "username": USERNAME
+              }
+          }).encode()
+
+          request = urllib.request.Request(
+              "https://api.github.com/graphql",
+              data=payload,
+              headers={
+                  "Authorization": f"Bearer {os.environ['GH_TOKEN']}",
+                  "Content-Type": "application/json",
+                  "User-Agent": "github-activity-generator"
+              }
+          )
+
+          with urllib.request.urlopen(request) as response:
+              data = json.loads(response.read())
+
+          if "errors" in data:
+              raise RuntimeError(json.dumps(data["errors"], indent=2))
+
+          calendar = data["data"]["user"]["contributionsCollection"]["contributionCalendar"]
+
+          total = calendar["totalContributions"]
+          weeks = calendar["weeks"]
+
+          days = []
+
+          for week in weeks:
+              for day in week["contributionDays"]:
+                  days.append(day)
+
+          # ---------------------------------------------------------
+          # Calculate statistics
+          # ---------------------------------------------------------
+
+          active_days = sum(
+              1 for day in days
+              if day["contributionCount"] > 0
+          )
+
+          longest_streak = 0
+          current_streak = 0
+
+          for day in days:
+              if day["contributionCount"] > 0:
+                  current_streak += 1
+                  longest_streak = max(longest_streak, current_streak)
+              else:
+                  current_streak = 0
+
+          # Current streak from the most recent day backwards
+          current_streak = 0
+
+          for day in reversed(days):
+              if day["contributionCount"] > 0:
+                  current_streak += 1
+              else:
+                  break
+
+          year = date.today().year
+
+          # ---------------------------------------------------------
+          # SVG configuration
+          # ---------------------------------------------------------
+
+          WIDTH = 1000
+          HEIGHT = 285
+
+          LEFT = 30
+          TOP = 92
+
+          CELL = 13
+          GAP = 4
+
+          STEP = CELL + GAP
+
+          # GitHub calendar normally contains ~53 weeks
+          calendar_width = len(weeks) * STEP
+
+          # ---------------------------------------------------------
+          # Color scale
+          # ---------------------------------------------------------
+
+          colors = [
+              "#1A1F2B",
+              "#233B58",
+              "#2E5D89",
+              "#3776AB",
+              "#8A2BE2"
+          ]
+
+          def level(count):
+              if count == 0:
+                  return 0
+              if count <= 2:
+                  return 1
+              if count <= 5:
+                  return 2
+              if count <= 10:
+                  return 3
+              return 4
+
+          # ---------------------------------------------------------
+          # Month labels
+          # ---------------------------------------------------------
+
+          month_positions = {}
+
+          for week_index, week in enumerate(weeks):
+              first_day = week["contributionDays"][0]["date"]
+              d = date.fromisoformat(first_day)
+
+              if d.day <= 7:
+                  month = d.strftime("%b")
+
+                  if month not in month_positions:
+                      month_positions[month] = week_index
+
+          # ---------------------------------------------------------
+          # Build SVG
+          # ---------------------------------------------------------
+
+          svg = []
+
+          svg.append(
+              f'<svg xmlns="http://www.w3.org/2000/svg" '
+              f'width="100%" height="{HEIGHT}" '
+              f'viewBox="0 0 {WIDTH} {HEIGHT}">'
+          )
+
+          # Background
+          svg.append(
+              '<rect width="100%" height="100%" '
+              'rx="18" fill="#0D1117"/>'
+          )
+
+          # Subtle border
+          svg.append(
+              '<rect x="0.5" y="0.5" width="999" height="284" '
+              'rx="18" fill="none" stroke="#30363D" stroke-width="1"/>'
+          )
+
+          # Accent line
+          svg.append(
+              '<rect x="30" y="28" width="70" height="3" rx="2" '
+              'fill="#3776AB"/>'
+          )
+
+          svg.append(
+              '<rect x="100" y="28" width="40" height="3" rx="2" '
+              'fill="#8A2BE2"/>'
+          )
+
+          # Title
+          svg.append(
+              '<text x="30" y="58" '
+              'font-family="Arial, Helvetica, sans-serif" '
+              'font-size="20" font-weight="700" '
+              'fill="#F0F6FC">CONTRIBUTION ACTIVITY</text>'
+          )
+
+          # Year
+          svg.append(
+              f'<text x="970" y="58" text-anchor="end" '
+              f'font-family="Arial, Helvetica, sans-serif" '
+              f'font-size="15" font-weight="600" '
+              f'fill="#8B949E">{year}</text>'
+          )
+
+          # Total contributions
+          svg.append(
+              f'<text x="30" y="78" '
+              f'font-family="Arial, Helvetica, sans-serif" '
+              f'font-size="13" fill="#8B949E">'
+              f'<tspan fill="#3776AB" font-weight="700">{total}</tspan>'
+              f' contributions</text>'
+          )
+
+          # Calendar
+          for week_index, week in enumerate(weeks):
+
+              x = LEFT + week_index * STEP
+
+              for day in week["contributionDays"]:
+
+                  d = date.fromisoformat(day["date"])
+
+                  # Sunday = 0
+                  weekday = (d.weekday() + 1) % 7
+
+                  y = TOP + weekday * STEP
+
+                  count = day["contributionCount"]
+
+                  fill = colors[level(count)]
+
+                  svg.append(
+                      f'<rect x="{x}" y="{y}" '
+                      f'width="{CELL}" height="{CELL}" rx="3" '
+                      f'fill="{fill}">'
+                      f'<title>{d.isoformat()}: '
+                      f'{count} contribution(s)</title>'
+                      f'</rect>'
+                  )
+
+          # Month labels
+          for month, week_index in month_positions.items():
+
+              x = LEFT + week_index * STEP
+
+              svg.append(
+                  f'<text x="{x}" y="112" '
+                  f'font-family="Arial, Helvetica, sans-serif" '
+                  f'font-size="11" fill="#8B949E">'
+                  f'{month}</text>'
+              )
+
+          # Bottom statistics
+          stats_y = 248
+
+          # Vertical separators
+          svg.append(
+              '<line x1="340" y1="225" x2="340" y2="265" '
+              'stroke="#30363D"/>'
+          )
+
+          svg.append(
+              '<line x1="670" y1="225" x2="670" y2="265" '
+              'stroke="#30363D"/>'
+          )
+
+          # Active days
+          svg.append(
+              f'<text x="30" y="{stats_y}" '
+              f'font-family="Arial, Helvetica, sans-serif" '
+              f'font-size="13" fill="#8B949E">'
+              f'<tspan fill="#F0F6FC" font-weight="700">{active_days}</tspan>'
+              f' active days</text>'
+          )
+
+          # Current streak
+          svg.append(
+              f'<text x="370" y="{stats_y}" '
+              f'font-family="Arial, Helvetica, sans-serif" '
+              f'font-size="13" fill="#8B949E">'
+              f'<tspan fill="#8A2BE2" font-weight="700">{current_streak}</tspan>'
+              f' day current streak</text>'
+          )
+
+          # Longest streak
+          svg.append(
+              f'<text x="700" y="{stats_y}" '
+              f'font-family="Arial, Helvetica, sans-serif" '
+              f'font-size="13" fill="#8B949E">'
+              f'<tspan fill="#3776AB" font-weight="700">{longest_streak}</tspan>'
+              f' day longest streak</text>'
+          )
+
+          svg.append("</svg>")
+
+          with open(OUTPUT, "w", encoding="utf-8") as file:
+              file.write("\n".join(svg))
+
+          print(f"Generated {OUTPUT}")
+          print(f"Total contributions: {total}")
+          print(f"Active days: {active_days}")
+          print(f"Current streak: {current_streak}")
+          print(f"Longest streak: {longest_streak}")
+          PY
+
+      - name: Commit generated SVG
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add github-contributions.svg
+
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "chore: update GitHub contribution activity"
+            git push
+          fi
