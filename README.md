@@ -41,8 +41,7 @@ I focus on building **scalable web solutions**, designing robust APIs with **Pyt
 
 <p align="center">
   <a href="https://github.com/guilleao">
-    <img src="https://github-readme-stats.vercel.app/api?username=guilleao&show_icons=true&theme=tokyonight&hide_border=true&count_private=true" width="48%" alt="Guille's Stats" />
-    <img src="https://github-readme-streak-stats.herokuapp.com/?user=guilleao&theme=tokyonight&hide_border=true" width="48%" alt="Guille's Streak" />
+    <img src="https://github-readme-activity-graph.vercel.app/graph?username=guilleao&theme=tokyo-night&hide_border=true&area=true" width="100%" alt="Guille's Activity Graph" />
   </a>
 </p>
 
