@@ -41,7 +41,7 @@ I focus on building **scalable web solutions**, designing robust APIs with **Pyt
 
 <p align="center">
   <img
-    src="./github-contributions.svg"
+    src="./github-activity-custom.svg"
     width="100%"
     alt="Guille's GitHub Contribution Activity"
   />
