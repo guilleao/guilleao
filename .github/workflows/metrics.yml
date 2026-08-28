@@ -1,0 +1,39 @@
+name: Generate Aesthetic Metrics
+
+on:
+  schedule:
+    - cron: "0 0 * * *"
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Main Dashboard
+        uses: lowlighter/metrics@latest
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          user: guilleao
+          filename: github-metrics.svg
+          template: classic
+          base: header, activity, community, repositories
+          config_theme: tokyonight
+          config_animations: yes
+          
+          # Configuración optimizada para evitar errores con el token por defecto
+          plugin_languages: yes
+          plugin_languages_details: bytes-size # Evita saturar la API
+          plugin_languages_colors: github
+          plugin_languages_limit: 8
+          plugin_languages_sections: most-used
+          
+      - name: Activity Graph
+        uses: lowlighter/metrics@latest
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          user: guilleao
+          filename: github-activity.svg
+          base: ""
+          config_theme: tokyonight
+          plugin_isocalendar: yes
+          plugin_isocalendar_duration: full-year
