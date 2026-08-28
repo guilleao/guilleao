@@ -35,7 +35,7 @@ I focus on building **scalable web solutions**, designing robust APIs with **Pyt
 - 💻 **Web & Backend:** Building custom web modules, REST APIs, and database architecture.
 - 🎓 **Education:** Applying Software Engineering, Architecture, and SDLC methodologies through real projects at UCA.
 
----
+<!-----
 
 ### 📊 GitHub Activity
 
@@ -45,7 +45,7 @@ I focus on building **scalable web solutions**, designing robust APIs with **Pyt
     width="100%"
     alt="Guille's GitHub Contribution Activity"
   />
-</p>
+</p>-->
 
 ---
 
